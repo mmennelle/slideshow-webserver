@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slideshow</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="non-fullscreen">
+    <div id="controls">
+        <h1>Upload and Play Slideshow</h1>
+        <form action="/" method="post" enctype="multipart/form-data">
+            <input type="file" name="photo">
+            <input type="submit" value="Upload">
+        </form>
+        <button id="fullscreen-btn">Toggle Fullscreen</button>
+    </div>
+    <div id="slideshow">
+        {% for photo in photos %}
+            <img src="{{ url_for('static', filename='uploads/' + photo) }}" class="slides">
+        {% endfor %}
+    </div>
+    <script>
+        // Fullscreen functionality
+        document.getElementById('fullscreen-btn').addEventListener('click', function() {
+            const elem = document.documentElement;
+            if (!document.fullscreenElement) {
+                elem.requestFullscreen().catch(err => {
+                    alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+                });
+                document.getElementById('controls').style.display = 'none';
+            } else {
+                document.exitFullscreen();
+                document.getElementById('controls').style.display = 'block';
+            }
+        });
+
+        
+        document.addEventListener('fullscreenchange', function() {
+            if (!document.fullscreenElement) {
+                document.getElementById('controls').style.display = 'block';
+                document.body.classList.add('non-fullscreen');
+            } else {
+                document.getElementById('controls').style.display = 'none';
+                document.body.classList.remove('non-fullscreen');
+            }
+        });
+
+        
+        let slideIndex = 0;
+        showSlides();
+
+        function showSlides() {
+            let slides = document.getElementsByClassName("slides");
+            for (let i = 0; i < slides.length; i++) {
+                slides[i].style.opacity = "0";
+                slides[i].style.zIndex = "1";  
+            }
+            slideIndex++;
+            if (slideIndex > slides.length) {slideIndex = 1}
+            slides[slideIndex-1].style.zIndex = "2";  
+            slides[slideIndex-1].style.opacity = "1";
+            setTimeout(showSlides, 5000); // Change This to change the slideshow length
+        }
+    </script>
+</body>
+</html>
