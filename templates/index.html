@@ -8,7 +8,7 @@
 </head>
 <body class="non-fullscreen">
     <div id="controls">
-        <h1>Computer Science Hallway Slideshow</h1>
+        <h1>Upload and Play Slideshow</h1>
         <form action="/" method="post" enctype="multipart/form-data">
             <input type="file" name="photo">
             <input type="submit" value="Upload">
@@ -17,7 +17,12 @@
     </div>
     <div id="slideshow">
         {% for photo in photos %}
-            <img src="{{ url_for('static', filename='uploads/' + photo) }}" class="slides">
+            <div class="photo-container">
+                <img src="{{ url_for('static', filename='uploads/' + photo) }}" class="slides">
+                <form action="{{ url_for('delete_photo', filename=photo) }}" method="post">
+                    <button type="submit">Delete</button>
+                </form>
+            </div>
         {% endfor %}
     </div>
     <script>
@@ -35,7 +40,7 @@
             }
         });
 
-        
+        // Handle exiting fullscreen mode to add class back
         document.addEventListener('fullscreenchange', function() {
             if (!document.fullscreenElement) {
                 document.getElementById('controls').style.display = 'block';
@@ -46,7 +51,7 @@
             }
         });
 
-        
+        // Slideshow with fade-in and fade-out
         let slideIndex = 0;
         showSlides();
 
@@ -54,13 +59,11 @@
             let slides = document.getElementsByClassName("slides");
             for (let i = 0; i < slides.length; i++) {
                 slides[i].style.opacity = "0";
-                slides[i].style.zIndex = "1";  
             }
             slideIndex++;
             if (slideIndex > slides.length) {slideIndex = 1}
-            slides[slideIndex-1].style.zIndex = "2";  
             slides[slideIndex-1].style.opacity = "1";
-            setTimeout(showSlides, 5000); // Change This to change the slideshow length
+            setTimeout(showSlides, 2000); // Change image every 2 seconds
         }
     </script>
 </body>
